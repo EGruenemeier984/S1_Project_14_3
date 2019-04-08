@@ -36,45 +36,50 @@
       Returns true if tString represents the text of a white space text
       node and false if it doesn't
 */
+// Global vars that count the amount of nodes are in the document.
 var nodeCount = 0;
 var elemCount = 0;
 var textCount = 0;
 var wsCount = 0;
 
+// this loads the makeTree function on the page loading.
 window.onload = makeTree;
-
+// This function establishes the node tree aside and appends the nodes to the document. 
 function makeTree() {
 	var aside = document.createElement("aside");
+	aside.id = "treeBox";
+	aside.innerHTML = "<h1>Node Tree</h1>";
+
 	var sectionMain = document.getElementById("main");
 	sectionMain.appendChild(aside);
-	var h1 = document.createElement("h1");
-	aside.appendChild(h1);
-	h1.appendChild(document.createTextNode("Node Tree"));
-	aside.setAttribute("id", "treeBox");
+
 	var nodeList = document.createElement("ol");
 	aside.appendChild(nodeList);
+
 	var sourceArticle = document.querySelector("#main article");
-
+	// calls the makeBranches function with 2 arguments.
 	makeBranches(sourceArticle, nodeList);
-
+	// adds the values of the amount of certain types of nodes to the website.
 	document.getElementById("totalNodes").textContent = nodeCount;
 	document.getElementById("elemNodes").textContent = elemCount;
 	document.getElementById("textNodes").textContent = textCount;
 	document.getElementById("wsNodes").textContent = wsCount;
 
 }
-
+// This function creates a nested list and loops throught the pages nodes and displays them in a nested format on the page. Starts with the root nodes and then loops through to the child nodes to display them in a nested form as the html would appear.
 function makeBranches(treeNode, nestedList) {
 	nodeCount++;
 	var liElem = document.createElement("li");
-	var spanElem = document.createElement("span");
 	liElem.innerHTML = ("+--");
-	nestedList.appendChild(liElem);
+
+	var spanElem = document.createElement("span");
 	liElem.appendChild(spanElem);
+	nestedList.appendChild(liElem);
+
 	if (treeNode.nodeType === 1) {
 		elemCount++;
 		spanElem.setAttribute("class", "elementNode");
-		spanElem.textContent = "<" + spanElem.nodeName.textContent + ">";
+		spanElem.textContent = "<" + treeNode.nodeName + ">";
 	} else if (treeNode.nodeType === 3) {
 		textCount++;
 		var textString = treeNode.nodeValue;
@@ -85,7 +90,7 @@ function makeBranches(treeNode, nestedList) {
 			spanElem.textContent = "#text";
 		} else {
 			spanElem.setAttribute("class", "textNode");
-			spanElem.textContent = "textString";
+			spanElem.textContent = textString;
 		}
 	}
 
@@ -93,7 +98,7 @@ function makeBranches(treeNode, nestedList) {
 		var newList = document.createElement("ol");
 		newList.innerHTML = "|";
 		nestedList.appendChild(newList);
-		for (var n = treeNode.childNodes; n != null; n = n.nextSibling) {
+		for (var n = treeNode.firstChild; n != null; n = n.nextSibling) {
 			makeBranches(n, newList);
 		}
 	}
